@@ -16,13 +16,16 @@ public class OauthConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception
     {
-        http.authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated());
-        http.oauth2Login(Customizer.withDefaults())
+        http.authorizeRequests(authorize -> authorize
+                .requestMatchers("/").permitAll()
+                .requestMatchers("/secured").authenticated()
+        ).oauth2Login(Customizer.withDefaults())
                 .logout(logout -> logout
                         .logoutUrl("/login?logout")
                         .logoutSuccessUrl("/login?logout")
                         .invalidateHttpSession(true)
-                        .clearAuthentication(true));
+                        .clearAuthentication(true)
+                );
 
         return http.build();
     }
