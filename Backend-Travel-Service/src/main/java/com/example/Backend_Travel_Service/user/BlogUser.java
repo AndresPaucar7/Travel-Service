@@ -50,7 +50,7 @@ public class BlogUser implements UserDetails {
     private Boolean locked = false;
     private Boolean enabled = false;
 
-    public BlogUser(String firstName,  String lastName, String email, String password, BlogUserRole blogUserRole) {
+    public BlogUser(String firstName, String lastName, String email, String password, BlogUserRole blogUserRole) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;

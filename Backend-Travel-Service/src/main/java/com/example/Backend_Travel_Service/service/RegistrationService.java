@@ -20,9 +20,9 @@ public class RegistrationService {
         return blogUserService.signUpUser(
             new BlogUser(
                 request.getFirstName(),
+                request.getLastName(),
                 request.getEmail(),
                 request.getPassword(),
-                request.getLastName(),
                 BlogUserRole.USER
             )
         );
