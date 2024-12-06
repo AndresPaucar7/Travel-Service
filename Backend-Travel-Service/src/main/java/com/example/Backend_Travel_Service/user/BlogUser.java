@@ -4,10 +4,15 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.example.Backend_Travel_Service.BlogUserRole;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,78 +22,84 @@ import java.util.Collection;
 import java.util.Collections;
 
 
-@Entity
 @Getter
 @Setter
 @EqualsAndHashCode
 @NoArgsConstructor
-public class BlogUser implements UserDetails {
+@Entity
+public class BlogUser implements UserDetails { 
 
+
+    @SequenceGenerator(
+            name = "student_sequence",
+            sequenceName = "student_sequence",
+            allocationSize = 1
+    )
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "student_sequence"
+    )
     private Long id;
-    private String name;
-    private String username;
+    private String firstName;
+    private String lastName;
     private String email;
     private String password;
-    private BlogUser blogUser;
-    private Boolean locked;
-    private Boolean enabled;
-    
-    
+    @Enumerated(EnumType.STRING)
+    private BlogUserRole blogUserRole; 
+    private Boolean locked = false;
+    private Boolean enabled = false;
 
-    public BlogUser(String name, String username, String email, String password, BlogUser blogUser, Boolean locked,Boolean enabled)
-    {
-        this.name = name;
-        this.username = username;
+    public BlogUser(String firstName,  String lastName, String email, String password, BlogUserRole blogUserRole) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.blogUser = blogUser;
-        this.locked = locked;
-        this.enabled = enabled;
+        this.blogUserRole = blogUserRole;
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities()
-    {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(blogUser.getName());
-        // replace singleton, it can make it difficult to test its cilent
-        return Collections.singleton(authority);
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        SimpleGrantedAuthority authority =
+                new SimpleGrantedAuthority(blogUserRole.name()); 
+        return Collections.singletonList(authority);
     }
 
     @Override
-    public String getPassword()
-    {
+    public String getPassword() {
         return password;
     }
 
     @Override
-    public String getUsername()
-    {
-        return username;
+    public String getUsername() {
+        return email;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
     }
 
     @Override
-    public boolean isAccountNonExpired()
-    {
+    public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
-    public boolean isAccountNonLocked()
-    {
+    public boolean isAccountNonLocked() {
         return !locked;
     }
 
     @Override
-    public boolean isCredentialsNonExpired()
-    {
+    public boolean isCredentialsNonExpired() {
         return true;
     }
 
     @Override
-    public boolean isEnabled()
-    {
+    public boolean isEnabled() {
         return enabled;
     }
 }

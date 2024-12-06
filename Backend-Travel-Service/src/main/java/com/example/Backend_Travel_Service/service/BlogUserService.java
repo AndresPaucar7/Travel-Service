@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.example.Backend_Travel_Service.repository.BlogUserRepo;
+import com.example.Backend_Travel_Service.user.BlogUser;
 
 import lombok.AllArgsConstructor;
 
@@ -20,6 +21,11 @@ public class BlogUserService implements UserDetailsService{
     {
         return blogUserRepo.findByEmail(email)
         .orElseThrow(() -> new UsernameNotFoundException("Email Not Found"));
+    }
+
+    public String signUpUser(BlogUser blogUser){
+        blogUserRepo.save(blogUser);
+        return "service";
     }
     
 }
