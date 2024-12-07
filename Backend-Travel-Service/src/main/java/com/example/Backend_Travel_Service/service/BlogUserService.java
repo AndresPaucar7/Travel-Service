@@ -25,11 +25,15 @@ public class BlogUserService implements UserDetailsService{
         .orElseThrow(() -> new UsernameNotFoundException("Email Not Found"));
     }
 
-    public String signUpUser(BlogUser blogUser){
+    public String signUpUser(BlogUser blogUser) {
+        if (blogUserRepo.findByEmail(blogUser.getEmail()).isPresent()) {
+            throw new IllegalStateException("Email already taken");
+        }
+        
         String encodedPassword = bCryptPasswordEncoder.encode(blogUser.getPassword());
         blogUser.setPassword(encodedPassword);
         blogUserRepo.save(blogUser);
-        return "service";
+        return "User registered successfully";
     }
     
 }

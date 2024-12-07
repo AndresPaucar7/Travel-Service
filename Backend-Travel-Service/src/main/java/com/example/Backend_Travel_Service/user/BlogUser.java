@@ -1,14 +1,11 @@
 package com.example.Backend_Travel_Service.user;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.example.Backend_Travel_Service.BlogUserRole;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -43,26 +40,22 @@ public class BlogUser implements UserDetails {
     private Long id;
     private String firstName;
     private String lastName;
+    @Column(unique = true)
     private String email;
-    private String password;
-    @Enumerated(EnumType.STRING)
-    private BlogUserRole blogUserRole; 
+    private String password; 
     private Boolean locked = false;
-    private Boolean enabled = false;
+    private Boolean enabled = true;
 
-    public BlogUser(String firstName, String lastName, String email, String password, BlogUserRole blogUserRole) {
+    public BlogUser(String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.blogUserRole = blogUserRole;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority =
-                new SimpleGrantedAuthority(blogUserRole.name()); 
-        return Collections.singletonList(authority);
+        return Collections.emptyList();
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.example.Backend_Travel_Service.service;
 
 import org.springframework.stereotype.Service;
 
-import com.example.Backend_Travel_Service.BlogUserRole;
 import com.example.Backend_Travel_Service.registration.RegistrationRequest;
 import com.example.Backend_Travel_Service.user.BlogUser;
 
@@ -22,8 +21,7 @@ public class RegistrationService {
                 request.getFirstName(),
                 request.getLastName(),
                 request.getEmail(),
-                request.getPassword(),
-                BlogUserRole.USER
+                request.getPassword()
             )
         );
     }
