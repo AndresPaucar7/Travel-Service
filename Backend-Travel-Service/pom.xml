@@ -53,16 +53,10 @@
     <scope>runtime</scope>
 </dependency>
         
-        <!-- Testing Dependencies -->
+        <!-- Java Sender -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-test</artifactId>
-            <scope>test</scope>
+            <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
         
         <!-- Utility Dependencies -->
