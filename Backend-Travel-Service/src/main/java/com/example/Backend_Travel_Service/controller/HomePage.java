@@ -4,8 +4,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class MainController {
-    @GetMapping("/")
+public class HomePage {
+    @GetMapping("/api/v1/homepage")
     public String home()
     {
         return "Public Page";
