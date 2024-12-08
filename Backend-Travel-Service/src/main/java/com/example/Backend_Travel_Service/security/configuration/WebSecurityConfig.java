@@ -13,7 +13,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import com.example.Backend_Travel_Service.service.BlogUserService;
 
 import lombok.AllArgsConstructor;
-
 @Configuration
 @AllArgsConstructor
 @EnableWebSecurity
@@ -28,7 +27,7 @@ public class WebSecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers("/api/v*/registration/**").permitAll()
-                .requestMatchers("/api/v*/requestsignup/**").permitAll()
+                .requestMatchers("/api/v*/requestsignup").permitAll()
                 .requestMatchers("/").permitAll()
                 .requestMatchers("/secured").authenticated()
                 .anyRequest().authenticated()
@@ -52,7 +51,6 @@ public class WebSecurityConfig {
         authprovider.setUserDetailsService(blogUserService);
         return authprovider;
     }
-
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {

@@ -10,7 +10,7 @@ import com.example.Backend_Travel_Service.registration.EmailRequest;
 import com.example.Backend_Travel_Service.service.EmailService;
 
 @RestController
-@RequestMapping(path = "api/v1/request-signup")
+@RequestMapping(path = "api/v1/requestsignup")
 @AllArgsConstructor
 public class SignUpRequestController   {
 
