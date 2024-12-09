@@ -14,7 +14,6 @@ public class EmailService {
 
     public void sendSignUpLink(String userEmail){
         SimpleMailMessage message = new SimpleMailMessage();
-        System.out.println("Here");
         message.setTo(userEmail);
         message.setSubject("Sign Up Here");
         message.setText("Click here to sign up \n" + 
