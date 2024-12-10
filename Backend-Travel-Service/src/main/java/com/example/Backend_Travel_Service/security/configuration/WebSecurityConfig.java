@@ -1,5 +1,7 @@
 package com.example.Backend_Travel_Service.security.configuration;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,6 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import com.example.Backend_Travel_Service.service.BlogUserService;
 
 import lombok.AllArgsConstructor;
+
 @Configuration
 @AllArgsConstructor
 @EnableWebSecurity
@@ -24,32 +27,30 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            .cors(cors -> cors.configurationSource(request -> {
+                var corsConfig = new org.springframework.web.cors.CorsConfiguration();
+                corsConfig.setAllowedOrigins(List.of("http://localhost:3000"));
+                corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                corsConfig.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+                corsConfig.setAllowCredentials(true);
+                return corsConfig;
+            }))
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/api/v*/registration/**").permitAll()
-                .requestMatchers("/api/v*/requestsignup").permitAll()
-                .requestMatchers("/api/v1/homepage").permitAll()
-                .requestMatchers("/secured").authenticated()
+                .requestMatchers("/api/v*/login", "/api/v*/logout", "/api/v*/registration/**", "/api/v*/requestsignup").permitAll()
                 .anyRequest().authenticated()
-            )
-            .formLogin(form -> form.defaultSuccessUrl("/secured", true))
-            .oauth2Login(oauth -> oauth.defaultSuccessUrl("/secured", true))
-            .logout(logout -> logout
-                .logoutUrl("/login?logout")
-                .logoutSuccessUrl("/login?logout")
-                .invalidateHttpSession(true)
-                .clearAuthentication(true)
             );
+            //.formLogin(form -> form.disable());
 
         return http.build();
     }
 
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
-        DaoAuthenticationProvider authprovider = new DaoAuthenticationProvider();
-        authprovider.setPasswordEncoder(bCryptPasswordEncoder);
-        authprovider.setUserDetailsService(blogUserService);
-        return authprovider;
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(blogUserService);
+        authProvider.setPasswordEncoder(bCryptPasswordEncoder);
+        return authProvider;
     }
 
     @Bean

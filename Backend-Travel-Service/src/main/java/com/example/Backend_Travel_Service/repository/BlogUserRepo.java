@@ -1,6 +1,5 @@
 package com.example.Backend_Travel_Service.repository;
 
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
