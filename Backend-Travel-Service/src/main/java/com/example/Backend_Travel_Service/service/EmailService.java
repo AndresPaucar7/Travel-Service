@@ -17,7 +17,7 @@ public class EmailService {
         message.setTo(userEmail);
         message.setSubject("Sign Up Here");
         message.setText("Click here to sign up \n" + 
-                        "http://localhost:8000/api/v1/registration");
+                        "http://localhost:3000/register");
 
         mailSender.send(message);
     }
