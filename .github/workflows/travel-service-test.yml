@@ -34,3 +34,7 @@ jobs:
       - name: Test database connection
         run: |
           PGPASSWORD=postgres psql -h localhost -U postgres -d TravelerRegistration -c "SELECT 'Database Connected!'"
+
+      - name: Check existing tables in TravelerRegistration
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d TravelerRegistration -c "\dt"
