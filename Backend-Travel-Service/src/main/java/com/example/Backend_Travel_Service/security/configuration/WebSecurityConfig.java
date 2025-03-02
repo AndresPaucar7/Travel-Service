@@ -37,11 +37,9 @@ public class WebSecurityConfig {
             }))
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/api/v*/login", "/api/v*/logout", "/api/v*/registration/**", "/api/v*/requestsignup").permitAll()
+                .requestMatchers("/api/v*/login", "/api/v*/registration/**", "/api/v*/requestsignup").permitAll()
                 .anyRequest().authenticated()
             );
-            //.formLogin(form -> form.disable());
-
         return http.build();
     }
 
