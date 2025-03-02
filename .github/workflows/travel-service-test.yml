@@ -1,5 +1,4 @@
 name: Backend Tests
-
 on:
   push:
     branches:
@@ -24,3 +23,14 @@ jobs:
           --health-interval 10s
           --health-timeout 4s
           --health-retries 2
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Let database start
+        run: sleep 10
+
+      - name: Test database connection
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d TravelerRegistration -c "SELECT 'Database Connected!'"
