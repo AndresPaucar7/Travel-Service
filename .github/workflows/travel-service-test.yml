@@ -8,29 +8,10 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:14
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: TravelerRegistration
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
-      - name: List running services
-        run: |
-          echo "Checking active services..."
-          sudo netstat -tulnp
 
       - name: Set environment variables from GitHub Secrets
         run: |
@@ -38,22 +19,23 @@ jobs:
           echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> $GITHUB_ENV
           echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> $GITHUB_ENV
 
-      - name: Debug database URL
+      - name: Debug database settings
         run: |
           echo "Using database URL: $SPRING_DATASOURCE_URL"
-          echo "Expected format: jdbc:postgresql://localhost:5432/TravelerRegistration"
 
-      - name: Wait for PostgreSQL to be ready
-        run: sleep 10
-
-      - name: Test PostgreSQL connection
+      - name: Verify connected database
         run: |
-          echo "Trying to connect to PostgreSQL..."
+          DB_NAME=$(PGPASSWORD=$SPRING_DATASOURCE_PASSWORD psql -h localhost -U $SPRING_DATASOURCE_USERNAME -d TravelerRegistration -tAc "SELECT current_database();")
+          if [ "$DB_NAME" = "ERROR" ]; then
+            echo " ERROR: Could not connect to the database"
+            exit 1
+          fi
           
-          for host in localhost 127.0.0.1 postgres; do
-            echo "Testing connection to: $host"
-            PGPASSWORD=$SPRING_DATASOURCE_PASSWORD psql -h $host -U $SPRING_DATASOURCE_USERNAME -d TravelerRegistration -c "SELECT current_database();" && exit 0
-          done
-
-          echo "ERROR: Could not connect to PostgreSQL on any host."
-          exit 1
+          echo "Connected to database: $DB_NAME"
+          
+          if [ "$DB_NAME" != "TravelerRegistration" ]; then
+            echo "ERROR: Not using the correct database!"
+            exit 1
+          else
+            echo "Correct database is in use."
+          fi
