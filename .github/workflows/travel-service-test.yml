@@ -31,14 +31,6 @@ jobs:
       - name: Let database start
         run: sleep 10
 
-      - name: Create application.properties
-        run: |
-          echo "spring.datasource.url=jdbc:postgresql://localhost:5432/${{ secrets.DB_NAME }}" >> Backend-Travel-Service/src/main/resources/application.properties
-          echo "spring.datasource.username=${{ secrets.DB_USER }}" >> Backend-Travel-Service/src/main/resources/application.properties
-          echo "spring.datasource.password=${{ secrets.DB_PASSWORD }}" >> Backend-Travel-Service/src/main/resources/application.properties
-          echo "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect" >> Backend-Travel-Service/src/main/resources/application.properties
-          echo "spring.jpa.hibernate.ddl-auto=create" >> Backend-Travel-Service/src/main/resources/application.properties
-
       - name: Check existing tables in TravelerRegistration
         run: |
           DB_NAME=$(PGPASSWORD=postgres psql -h localhost -U postgres -d TravelerRegistration -tAc "SELECT current_database();")
@@ -55,3 +47,4 @@ jobs:
           else
             echo "SPRING_DATASOURCE_URL: $SPRING_DATASOURCE_URL"
             echo "We are using the correct database."
+          fi
