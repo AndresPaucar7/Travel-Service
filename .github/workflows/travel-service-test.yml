@@ -33,7 +33,7 @@ jobs:
 
       - name: Check existing tables in TravelerRegistration
         run: |
-          DB_NAME=$(PGPASSWORD=postgres psql -h localhost -U postgres -d TravelerRegistration -tAc "SELECT current_database();")
+          DB_NAME=$(PGPASSWORD=123456 psql -h localhost -U postgres -d TravelerRegistration -tAc "SELECT current_database();")
           
           if [ "$DB_NAME" = "ERROR" ]; then
             echo " ERROR: Could not connect to the database"
