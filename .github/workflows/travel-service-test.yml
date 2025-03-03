@@ -46,5 +46,6 @@ jobs:
             echo "Error: Not using the correct database"
             exit 1
           else
+            echo "SPRING_DATASOURCE_URL: $SPRING_DATASOURCE_URL"
             echo "We are using the correct database."
           fi
