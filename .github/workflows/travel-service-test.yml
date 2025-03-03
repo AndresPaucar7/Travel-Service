@@ -10,42 +10,34 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:17
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: TravelerRegistration
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 4s
-          --health-retries 2
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Let database start
-        run: sleep 10
-
-      - name: Check existing tables in TravelerRegistration
+      - name: Set environment variables from GitHub Secrets
         run: |
-          DB_NAME=$(PGPASSWORD=postgres psql -h localhost -U postgres -d TravelerRegistration -tAc "SELECT current_database();")
-          
+          echo "SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}" >> $GITHUB_ENV
+          echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> $GITHUB_ENV
+          echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> $GITHUB_ENV
+
+      - name: Debug database settings
+        run: |
+          echo "Using database URL: $SPRING_DATASOURCE_URL"
+
+      - name: Verify connected database
+        run: |
+          DB_NAME=$(PGPASSWORD=$SPRING_DATASOURCE_PASSWORD psql -h localhost -U $SPRING_DATASOURCE_USERNAME -d TravelerRegistration -tAc "SELECT current_database();")
           if [ "$DB_NAME" = "ERROR" ]; then
             echo " ERROR: Could not connect to the database"
             exit 1
           fi
           
           echo "Connected to database: $DB_NAME"
+          
           if [ "$DB_NAME" != "TravelerRegistration" ]; then
-            echo "Error: Not using the correct database"
+            echo "ERROR: Not using the correct database!"
             exit 1
           else
-            echo "SPRING_DATASOURCE_URL: $SPRING_DATASOURCE_URL"
-            echo "We are using the correct database."
+            echo "Correct database is in use."
           fi
