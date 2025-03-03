@@ -27,26 +27,33 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: List running services
+        run: |
+          echo "Checking active services..."
+          sudo netstat -tulnp
+
       - name: Set environment variables from GitHub Secrets
         run: |
           echo "SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}" >> $GITHUB_ENV
           echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> $GITHUB_ENV
           echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> $GITHUB_ENV
 
+      - name: Debug database URL
+        run: |
+          echo "Using database URL: $SPRING_DATASOURCE_URL"
+          echo "Expected format: jdbc:postgresql://localhost:5432/TravelerRegistration"
+
       - name: Wait for PostgreSQL to be ready
         run: sleep 10
 
-      - name: Debug database settings
+      - name: Test PostgreSQL connection
         run: |
-          echo "Using database URL: $SPRING_DATASOURCE_URL"
+          echo "Trying to connect to PostgreSQL..."
+          
+          for host in localhost 127.0.0.1 postgres; do
+            echo "Testing connection to: $host"
+            PGPASSWORD=$SPRING_DATASOURCE_PASSWORD psql -h $host -U $SPRING_DATASOURCE_USERNAME -d TravelerRegistration -c "SELECT current_database();" && exit 0
+          done
 
-      - name: Verify connected database
-        run: |
-          DB_NAME=$(PGPASSWORD=$SPRING_DATASOURCE_PASSWORD psql -h localhost -U $SPRING_DATASOURCE_USERNAME -d TravelerRegistration -tAc "SELECT current_database();" || echo "ERROR")
-          if [ "$DB_NAME" = "ERROR" ]; then
-            echo " ERROR: Could not connect to the database"
-            exit 1
-          fi
-          echo "Connected to database: $DB_NAME"
-          if [ "$DB_NAME" != "TravelerRegistration" ]; then
-            echo "ERROR: Not using the correct data
+          echo "ERROR: Could not connect to PostgreSQL on any host."
+          exit 1
