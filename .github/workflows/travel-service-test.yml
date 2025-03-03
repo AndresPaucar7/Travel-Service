@@ -3,14 +3,16 @@ on:
   push:
     branches:
       - main
+      - dev
   pull_request:
+
 
 jobs:
   test:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:14
+        image: postgres:17
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -20,28 +22,30 @@ jobs:
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
+          --health-timeout 4s
+          --health-retries 2
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Load Environment Secrets
-        run: |
-          echo "SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}" >> $GITHUB_ENV
-          echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> $GITHUB_ENV
-          echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> $GITHUB_ENV
-
-      - name: Debug database settings
-        run: |
-          echo "Using database URL: $SPRING_DATASOURCE_URL"
-
-      - name: Wait for PostgreSQL to be ready
+      - name: Let database start
         run: sleep 10
 
-      - name: Test PostgreSQL connection
+      - name: Check existing tables in TravelerRegistration
         run: |
-          echo "Trying to connect to PostgreSQL..."
-          PGPASSWORD=$SPRING_DATASOURCE_PASSWORD psql -h localhost -U $SPRING_DATASOURCE_USERNAME -d TravelerRegistration -c "SELECT current_database();"
+          DB_NAME=$(PGPASSWORD=postgres psql -h localhost -U postgres -d TravelerRegistration -tAc "SELECT current_database();")
+          
+          if [ "$DB_NAME" = "ERROR" ]; then
+            echo " ERROR: Could not connect to the database"
+            exit 1
+          fi
+          
+          echo "Connected to database: $DB_NAME"
+          if [ "$DB_NAME" != "TravelerRegistration" ]; then
+            echo "Error: Not using the correct database"
+            exit 1
+          else
+            echo "SPRING_DATASOURCE_URL: $SPRING_DATASOURCE_URL"
+            echo "We are using the correct database."
+          fi
