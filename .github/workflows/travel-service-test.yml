@@ -8,6 +8,20 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: TravelerRegistration
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout repository
@@ -19,23 +33,20 @@ jobs:
           echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> $GITHUB_ENV
           echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> $GITHUB_ENV
 
+      - name: Wait for PostgreSQL to be ready
+        run: sleep 10
+
       - name: Debug database settings
         run: |
           echo "Using database URL: $SPRING_DATASOURCE_URL"
 
       - name: Verify connected database
         run: |
-          DB_NAME=$(PGPASSWORD=$SPRING_DATASOURCE_PASSWORD psql -h localhost -U $SPRING_DATASOURCE_USERNAME -d TravelerRegistration -tAc "SELECT current_database();")
+          DB_NAME=$(PGPASSWORD=$SPRING_DATASOURCE_PASSWORD psql -h localhost -U $SPRING_DATASOURCE_USERNAME -d TravelerRegistration -tAc "SELECT current_database();" || echo "ERROR")
           if [ "$DB_NAME" = "ERROR" ]; then
             echo " ERROR: Could not connect to the database"
             exit 1
           fi
-          
           echo "Connected to database: $DB_NAME"
-          
           if [ "$DB_NAME" != "TravelerRegistration" ]; then
-            echo "ERROR: Not using the correct database!"
-            exit 1
-          else
-            echo "Correct database is in use."
-          fi
+            echo "ERROR: Not using the correct data
