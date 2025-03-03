@@ -37,4 +37,11 @@ jobs:
 
       - name: Check existing tables in TravelerRegistration
         run: |
-          PGPASSWORD=postgres psql -h localhost -U postgres -d TravelerRegistration -c "\dt"
+          DB_NAME=$(PGPASSWORD=postgres psql -h localhost -U postgres -d TravelerRegistration -tAc "SELECT current_database();")
+          echo"Connected to datbase: $DB_NAME"
+          if [ "DB_NAME" !=  "TravelerRegistration" ]: then
+            echo "Error: not using the correct table"
+            exit 1
+          else
+            echo "We are using the correct table"
+          fi
