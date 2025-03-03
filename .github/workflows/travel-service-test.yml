@@ -31,17 +31,19 @@ jobs:
       - name: Let database start
         run: sleep 10
 
-      - name: Test database connection
-        run: |
-          PGPASSWORD=postgres psql -h localhost -U postgres -d TravelerRegistration -c "SELECT 'Database Connected!'"
-
       - name: Check existing tables in TravelerRegistration
         run: |
           DB_NAME=$(PGPASSWORD=postgres psql -h localhost -U postgres -d TravelerRegistration -tAc "SELECT current_database();")
+          
+          if [ "$DB_NAME" = "ERROR" ]; then
+            echo " ERROR: Could not connect to the database"
+            exit 1
+          fi
+          
           echo "Connected to database: $DB_NAME"
           if [ "$DB_NAME" != "TravelerRegistration" ]; then
-            echo "❌ Error: Not using the correct database!"
+            echo "Error: Not using the correct database"
             exit 1
           else
-            echo "✅ We are using the correct database."
+            echo "We are using the correct database."
           fi
