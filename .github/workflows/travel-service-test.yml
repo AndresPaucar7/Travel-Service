@@ -33,12 +33,11 @@ jobs:
 
       - name: Create application.properties
         run: |
-          echo "spring.datasource.url=jdbc:postgresql://localhost:5432/${{ secrets.DB_NAME }}" >> src/main/resources/application.properties
-          echo "spring.datasource.username=${{ secrets.DB_USER }}" >> src/main/resources/application.properties
-          echo "spring.datasource.password=${{ secrets.DB_PASSWORD }}" >> src/main/resources/application.properties
-          echo "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect" >> src/main/resources/application.properties
-          echo "spring.jpa.hibernate.ddl-auto=create" >> src/main/resources/application.properties
-          # Additional non-sensitive properties can be added here
+          echo "spring.datasource.url=jdbc:postgresql://localhost:5432/${{ secrets.DB_NAME }}" >> Backend-Travel-Service/src/main/resources/application.properties
+          echo "spring.datasource.username=${{ secrets.DB_USER }}" >> Backend-Travel-Service/src/main/resources/application.properties
+          echo "spring.datasource.password=${{ secrets.DB_PASSWORD }}" >> Backend-Travel-Service/src/main/resources/application.properties
+          echo "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect" >> Backend-Travel-Service/src/main/resources/application.properties
+          echo "spring.jpa.hibernate.ddl-auto=create" >> Backend-Travel-Service/src/main/resources/application.properties
 
       - name: Check existing tables in TravelerRegistration
         run: |
