@@ -13,7 +13,7 @@ import com.example.Backend_Travel_Service.service.EmailService;
 
 @RestController
 @RequestMapping(path = "api/v1/requestsignup")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "https://travelblog7.netlify.app"})
 @AllArgsConstructor
 public class SignUpRequestController   {
 

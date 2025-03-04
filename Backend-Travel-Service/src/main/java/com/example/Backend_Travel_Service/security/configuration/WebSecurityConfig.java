@@ -29,7 +29,7 @@ public class WebSecurityConfig {
         http
             .cors(cors -> cors.configurationSource(request -> {
                 var corsConfig = new org.springframework.web.cors.CorsConfiguration();
-                corsConfig.setAllowedOrigins(List.of("http://localhost:3000"));
+                corsConfig.setAllowedOrigins(List.of("http://localhost:3000", "https://travelblog7.netlify.app"));
                 corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 corsConfig.setAllowedHeaders(List.of("Authorization", "Content-Type"));
                 corsConfig.setAllowCredentials(true);
